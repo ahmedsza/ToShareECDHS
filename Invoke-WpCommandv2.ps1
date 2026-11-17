@@ -108,7 +108,9 @@ function Invoke-StreamingCommand {
         $async = $sshCommand.BeginExecute()
         foreach ($isError in @($false, $true)) {
             $stream = if ($isError) { $sshCommand.ExtendedOutputStream } else { $sshCommand.OutputStream }
-            $stream.BlockLastReadBuffer = $false
+            if ($null -ne $stream.PSObject.Properties['BlockLastReadBuffer']) {
+                $stream.BlockLastReadBuffer = $false
+            }
             $streams += [pscustomobject]@{
                 Stream = $stream
                 Decoder = [Text.Encoding]::UTF8.GetDecoder()
